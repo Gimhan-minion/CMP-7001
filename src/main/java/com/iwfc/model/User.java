@@ -1,12 +1,13 @@
 package com.iwfc.model;
 
+import com.iwfc.pattern.NotificationListener;
 import com.iwfc.repository.Identifiable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class User implements Identifiable<String> {
+public abstract class User implements Identifiable<String>, NotificationListener {
 
     private final String id;
     private String name;
@@ -45,7 +46,8 @@ public abstract class User implements Identifiable<String> {
         return false;
     }
 
-    public void receive(String message) {
+    @Override
+    public void onNotification(String message) {
         inbox.add(message);
     }
 
