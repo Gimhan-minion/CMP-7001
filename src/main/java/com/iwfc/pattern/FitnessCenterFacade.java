@@ -162,6 +162,11 @@ public class FitnessCenterFacade {
         return schedulingService.bookSession(currentUser.getId(), sessionId);
     }
 
+    public List<FitnessSession> bookSeries(String sessionId) {
+        require(currentUser().canBookSessions(), "book sessions");
+        return schedulingService.bookSeries(currentUser.getId(), sessionId);
+    }
+
     public void cancelBooking(String sessionId) {
         require(currentUser().canBookSessions(), "cancel bookings");
         schedulingService.cancelBooking(currentUser.getId(), sessionId);

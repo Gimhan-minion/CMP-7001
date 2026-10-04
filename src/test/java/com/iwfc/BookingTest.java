@@ -7,6 +7,8 @@ import com.iwfc.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -103,5 +105,43 @@ class BookingTest extends ServiceTestBase {
 
         assertTrue(schedulingService.getAllSessions().isEmpty());
         assertTrue(member.getInbox().get(0).contains("Session cancelled"));
+    }
+
+    @Test
+    void memberCanBookWholeWeeklySeries() {
+        List<FitnessSession> weekly = schedulingService.createRecurring(
+                session("Monday Pilates", "Studio C", 7, 8).instructor("I2"), 4);
+
+        List<FitnessSession> booked = schedulingService.bookSeries("M1", weekly.get(0).getId());
+
+        assertEquals(4, booked.size());
+        assertTrue(weekly.stream().allMatch(s -> s.hasMember("M1")));
+    }
+
+    @Test
+    void seriesBookingStartsFromChosenWeek() {
+        List<FitnessSession> weekly = schedulingService.createRecurring(
+                session("Monday Pilates", "Studio C", 7, 8).instructor("I2"), 4);
+
+        List<FitnessSession> booked = schedulingService.bookSeries("M1", weekly.get(2).getId());
+
+        assertEquals(2, booked.size());
+        assertFalse(weekly.get(0).hasMember("M1"));
+    }
+
+    @Test
+    void seriesBookingIsAllOrNothing() {
+        List<FitnessSession> weekly = schedulingService.createRecurring(
+                session("Monday Pilates", "Studio C", 7, 8).instructor("I2").capacity(1), 3);
+        schedulingService.bookSession("M2", weekly.get(1).getId());
+
+        assertThrows(InvalidBookingException.class, () -> schedulingService.bookSeries("M1", weekly.get(0).getId()));
+        assertFalse(weekly.get(0).hasMember("M1"));
+        assertFalse(weekly.get(2).hasMember("M1"));
+    }
+
+    @Test
+    void seriesBookingRejectsOneOffSession() {
+        assertThrows(InvalidBookingException.class, () -> schedulingService.bookSeries("M1", hiit.getId()));
     }
 }

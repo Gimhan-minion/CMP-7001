@@ -76,26 +76,30 @@ public class SchedulingService {
 
     public FitnessSession bookSession(String memberId, String sessionId) {
         FitnessSession session = sessionRepo.getById(normalise(sessionId));
-        if (!session.getStart().isAfter(LocalDateTime.now())) {
-            throw new InvalidBookingException("Session " + session.getId() + " has already started");
-        }
-        if (session.hasMember(memberId)) {
-            throw new InvalidBookingException("You have already booked " + session.getId());
-        }
-        if (session.isFull()) {
-            throw new InvalidBookingException("Session " + session.getId() + " is fully booked");
-        }
-        for (FitnessSession booked : getBookingsFor(memberId)) {
-            if (booked.overlaps(session)) {
-                throw new InvalidBookingException("Time clash with your booking " + booked.getId()
-                        + " (" + booked.getTitle() + ")");
-            }
-        }
+        checkCanBook(memberId, session);
         session.addMember(memberId);
         notifications.notifyUser(memberId, "Booking confirmed: " + describe(session));
         notifications.notifyUser(session.getInstructorId(),
                 memberId + " booked " + session.getTitle() + " (" + session.getAvailableSpots() + " spots left)");
         return session;
+    }
+
+    public List<FitnessSession> bookSeries(String memberId, String sessionId) {
+        FitnessSession first = sessionRepo.getById(normalise(sessionId));
+        if (!first.isRecurring()) {
+            throw new InvalidBookingException(first.getId() + " is not part of a weekly series");
+        }
+        List<FitnessSession> series = sorted(sessionRepo.findBy(s -> first.getRecurringGroupId().equals(s.getRecurringGroupId())
+                && !s.getStart().isBefore(first.getStart())));
+        for (FitnessSession occurrence : series) {
+            checkCanBook(memberId, occurrence);
+        }
+        series.forEach(s -> s.addMember(memberId));
+        notifications.notifyUser(memberId, "Booked " + series.size() + " weeks of " + first.getTitle()
+                + " starting " + first.getStart().format(FORMAT));
+        notifications.notifyUser(first.getInstructorId(),
+                memberId + " booked the full " + first.getTitle() + " series");
+        return series;
     }
 
     public void cancelBooking(String memberId, String sessionId) {
@@ -129,6 +133,24 @@ public class SchedulingService {
 
     public FitnessSession getById(String sessionId) {
         return sessionRepo.getById(normalise(sessionId));
+    }
+
+    private void checkCanBook(String memberId, FitnessSession session) {
+        if (!session.getStart().isAfter(LocalDateTime.now())) {
+            throw new InvalidBookingException("Session " + session.getId() + " has already started");
+        }
+        if (session.hasMember(memberId)) {
+            throw new InvalidBookingException("You have already booked " + session.getId());
+        }
+        if (session.isFull()) {
+            throw new InvalidBookingException("Session " + session.getId() + " is fully booked");
+        }
+        for (FitnessSession booked : getBookingsFor(memberId)) {
+            if (booked.overlaps(session)) {
+                throw new InvalidBookingException("Time clash with your booking " + booked.getId()
+                        + " (" + booked.getTitle() + ")");
+            }
+        }
     }
 
     private void validate(FitnessSession session, List<FitnessSession> pending) {

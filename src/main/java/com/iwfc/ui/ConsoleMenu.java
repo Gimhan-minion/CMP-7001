@@ -94,8 +94,8 @@ public class ConsoleMenu {
                         "Cancel a session", "View equipment", "Log equipment usage", "Report a fault",
                         "My fault reports", "Notifications", "View maintenance log");
             default:
-                return List.of("View available sessions", "Book a session", "My bookings", "Cancel a booking",
-                        "Notifications", "View maintenance log");
+                return List.of("View available sessions", "Book a session", "Book all weeks of a weekly class",
+                        "My bookings", "Cancel a booking", "Notifications", "View maintenance log");
         }
     }
 
@@ -159,10 +159,16 @@ public class ConsoleMenu {
                 FitnessSession booked = facade.bookSession(read("Session ID to book: "));
                 System.out.println("Booked " + booked.getTitle() + ". See you there!");
                 break;
-            case 3: printList(facade.getMyBookings(), "You have no bookings."); break;
-            case 4: facade.cancelBooking(read("Session ID to cancel: ")); System.out.println("Booking cancelled."); break;
-            case 5: showNotifications(); break;
-            case 6: printList(facade.getMaintenanceLog(), "Maintenance log is empty."); break;
+            case 3:
+                printList(facade.getAvailableSessions(), "No sessions available right now.");
+                List<FitnessSession> series = facade.bookSeries(read("Session ID of the first week: "));
+                System.out.println("Booked " + series.size() + " weeks:");
+                printList(series, "");
+                break;
+            case 4: printList(facade.getMyBookings(), "You have no bookings."); break;
+            case 5: facade.cancelBooking(read("Session ID to cancel: ")); System.out.println("Booking cancelled."); break;
+            case 6: showNotifications(); break;
+            case 7: printList(facade.getMaintenanceLog(), "Maintenance log is empty."); break;
             default: System.out.println("Invalid option.");
         }
     }
