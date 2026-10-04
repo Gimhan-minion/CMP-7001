@@ -14,6 +14,7 @@ public final class NotificationCenter {
     public static final String INSTRUCTORS = "INSTRUCTORS";
     public static final String MEMBERS = "MEMBERS";
 
+    // Singleton pattern (creational): one shared notification hub for the whole system
     private static NotificationCenter instance;
 
     private final Map<String, List<NotificationListener>> subscribers = new HashMap<>();
@@ -43,6 +44,7 @@ public final class NotificationCenter {
         }
     }
 
+    // Observer pattern (behavioural): every listener subscribed to the topic is notified automatically
     public int publish(String topic, String message) {
         List<NotificationListener> list = subscribers.getOrDefault(topic, Collections.emptyList());
         String stamped = "[" + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) + "] " + message;

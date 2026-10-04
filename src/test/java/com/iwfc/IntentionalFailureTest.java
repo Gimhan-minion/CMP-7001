@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+// Intentional failing test: expects the wrong exception type to prove that a double booking
+// throws InvalidBookingException and not UnauthorizedAccessException. Run with mvn test -Pfailing
 @Tag("failing")
 class IntentionalFailureTest extends ServiceTestBase {
 

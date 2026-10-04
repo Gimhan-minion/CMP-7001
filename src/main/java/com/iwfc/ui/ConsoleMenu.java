@@ -74,6 +74,7 @@ public class ConsoleMenu {
             try {
                 handle(user.getRole(), choice);
             } catch (IwfcException e) {
+                // Custom exceptions are handled here so the app keeps running after an error
                 printError(e);
             } catch (IllegalArgumentException | IllegalStateException | DateTimeException e) {
                 System.out.println("Invalid input: " + e.getMessage());

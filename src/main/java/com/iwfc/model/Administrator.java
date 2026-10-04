@@ -1,5 +1,6 @@
 package com.iwfc.model;
 
+// Inheritance: Administrator reuses everything from User and overrides the permission methods
 public class Administrator extends User {
 
     public Administrator(String id, String name, String email) {

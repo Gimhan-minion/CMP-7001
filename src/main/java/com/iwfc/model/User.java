@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// Abstraction: User is abstract and cannot be created directly. It defines what every user
+// has in common and leaves role specific behaviour to the subclasses.
 public abstract class User implements Identifiable<String>, NotificationListener {
 
+    // Encapsulation: fields are private and only changed through validated setters
     private final String id;
     private String name;
     private String email;
@@ -26,6 +29,7 @@ public abstract class User implements Identifiable<String>, NotificationListener
         this.inbox = new ArrayList<>();
     }
 
+    // Abstract methods that each subclass must implement differently (polymorphism)
     public abstract Role getRole();
 
     public abstract String getMenuTitle();
@@ -51,6 +55,7 @@ public abstract class User implements Identifiable<String>, NotificationListener
         inbox.add(message);
     }
 
+    // Returns a read only view so the inbox cannot be modified from outside
     public List<String> getInbox() {
         return Collections.unmodifiableList(inbox);
     }

@@ -141,6 +141,8 @@ public class FitnessSession implements Identifiable<String> {
                 bookedMembers.size(), capacity, isRecurring() ? "  (weekly)" : "");
     }
 
+    // Builder pattern (creational): a session has many fields, so it is built step by step
+    // and validated once in build() instead of using a long constructor
     public static class Builder {
 
         private String id;

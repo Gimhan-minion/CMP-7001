@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 public class InMemoryRepository<T extends Identifiable<ID>, ID> implements Repository<T, ID> {
 
+    // Collections: entities are stored in a map keyed by id for fast lookup and duplicate checks
     private final Map<ID, T> store = new LinkedHashMap<>();
     private final String entityName;
 

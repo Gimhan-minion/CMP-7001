@@ -65,6 +65,7 @@ public class EquipmentService {
             throw new IllegalStateException(equipment.getId() + " is deactivated");
         }
         equipment.addUsage(hours);
+        // Delegates the decision to whichever strategy is currently set
         if (thresholdStrategy.needsMaintenance(equipment) && alerted.add(equipment.getId())) {
             notifications.publish(NotificationCenter.ADMINS, String.format(
                     "Preventative maintenance due for %s (%s): %.1f hours since last service, limit %.0f",

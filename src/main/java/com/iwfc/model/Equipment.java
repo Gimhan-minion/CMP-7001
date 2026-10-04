@@ -25,6 +25,7 @@ public class Equipment implements Identifiable<String> {
         this.active = true;
     }
 
+    // Encapsulation: usage hours can only grow through this method, never set directly
     public void addUsage(double hours) {
         if (hours <= 0) {
             throw new IllegalArgumentException("Usage hours must be greater than zero");

@@ -11,6 +11,7 @@ public final class UserFactory {
     private UserFactory() {
     }
 
+    // Factory pattern (creational): callers ask for a role and get the correct User subclass back
     public static User create(Role role, String id, String name, String email, String extra) {
         if (role == null) {
             throw new IllegalArgumentException("Role is required");

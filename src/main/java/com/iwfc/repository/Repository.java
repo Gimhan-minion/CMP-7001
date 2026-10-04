@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+// Generics: one repository contract works for any entity type T with an id of type ID
 public interface Repository<T extends Identifiable<ID>, ID> {
 
     T add(T item);

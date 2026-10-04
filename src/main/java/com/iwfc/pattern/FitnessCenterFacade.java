@@ -15,6 +15,8 @@ import com.iwfc.service.UserService;
 
 import java.util.List;
 
+// Facade pattern (structural): single entry point for the UI that hides the four services
+// and applies role based access control before every action
 public class FitnessCenterFacade {
 
     private final UserService userService;
@@ -93,6 +95,8 @@ public class FitnessCenterFacade {
         return equipmentService.logUsage(equipmentId, hours);
     }
 
+    // Polymorphism: canViewMaintenanceLog() runs the Administrator, Instructor or Member version
+    // depending on who is logged in, so no role checks with if/else are needed here
     public List<MaintenanceRequest> getMaintenanceLog() {
         require(currentUser().canViewMaintenanceLog(), "view the maintenance log");
         return maintenanceService.getGlobalLog();

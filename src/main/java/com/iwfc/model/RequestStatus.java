@@ -5,6 +5,7 @@ public enum RequestStatus {
     ASSIGNED,
     COMPLETED;
 
+    // Workflow rule: PENDING -> ASSIGNED -> COMPLETED, any other move is rejected
     public boolean canMoveTo(RequestStatus next) {
         switch (this) {
             case PENDING:

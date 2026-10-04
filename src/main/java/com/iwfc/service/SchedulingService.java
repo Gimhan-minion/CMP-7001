@@ -153,6 +153,8 @@ public class SchedulingService {
         }
     }
 
+    // Double booking prevention: checks operating hours, equipment state and any overlapping
+    // session using the same studio, equipment or instructor
     private void validate(FitnessSession session, List<FitnessSession> pending) {
         LocalDateTime start = session.getStart();
         LocalDateTime end = session.getEnd();
