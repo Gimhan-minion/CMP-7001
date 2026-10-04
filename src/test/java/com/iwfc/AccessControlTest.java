@@ -126,4 +126,29 @@ class AccessControlTest extends ServiceTestBase {
         assertEquals(true, admin.canViewMaintenanceLog());
         assertEquals(false, member.canViewMaintenanceLog());
     }
+
+    @Test
+    void memberCannotManageUsers() {
+        facade.login("M1");
+
+        assertThrows(UnauthorizedAccessException.class, () -> facade.listUsers());
+        assertThrows(UnauthorizedAccessException.class,
+                () -> facade.registerUser(Role.MEMBER, "M9", "New Person", "new@gmail.com", "Standard"));
+    }
+
+    @Test
+    void adminCanRegisterAndListUsers() {
+        facade.login("A1");
+
+        facade.registerUser(Role.INSTRUCTOR, "I9", "New Coach", "coach@iwfc.lk", "Spin");
+
+        assertEquals(7, facade.listUsers().size());
+    }
+
+    @Test
+    void adminCannotDeactivateOwnAccount() {
+        facade.login("A1");
+
+        assertThrows(IllegalArgumentException.class, () -> facade.deactivateUser("A1"));
+    }
 }

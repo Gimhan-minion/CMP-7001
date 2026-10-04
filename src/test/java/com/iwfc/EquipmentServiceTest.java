@@ -108,4 +108,37 @@ class EquipmentServiceTest extends ServiceTestBase {
 
         assertTrue(equipmentService.logUsage("EQ3", 400));
     }
+
+    @Test
+    void loggingUsageForUnknownEquipmentThrows() {
+        assertThrows(EntityNotFoundException.class, () -> equipmentService.logUsage("EQ99", 3));
+    }
+
+    @Test
+    void deactivatingUnknownEquipmentThrows() {
+        assertThrows(EntityNotFoundException.class, () -> equipmentService.deactivate("EQ99"));
+    }
+
+    @Test
+    void cannotLogUsageOnDeactivatedEquipment() {
+        equipmentService.deactivate("EQ3");
+
+        assertThrows(IllegalStateException.class, () -> equipmentService.logUsage("EQ3", 1));
+    }
+
+    @Test
+    void maintenanceListExcludesDeactivatedEquipment() {
+        equipmentService.logUsage("EQ1", 350);
+        equipmentService.deactivate("EQ1");
+
+        assertTrue(equipmentService.getDueForMaintenance().isEmpty());
+    }
+
+    @Test
+    void changesEquipmentStatus() {
+        equipmentService.updateStatus("EQ2", EquipmentStatus.UNDER_MAINTENANCE);
+
+        assertEquals(EquipmentStatus.UNDER_MAINTENANCE, equipmentService.getById("EQ2").getStatus());
+        assertEquals(1, equipmentService.getByStatus(EquipmentStatus.UNDER_MAINTENANCE).size());
+    }
 }
