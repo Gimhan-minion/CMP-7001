@@ -108,7 +108,7 @@ public class Equipment implements Identifiable<String> {
 
     @Override
     public String toString() {
-        return String.format("%-6s %-22s %-15s %-14s %-18s %8.1fh %s",
+        return String.format("%-6s %-20s %-19s %-12s %-18s %7.1fh %s",
                 id, name, type, location, status, usageHours, active ? "" : "(deactivated)");
     }
 }
